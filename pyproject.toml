@@ -1,0 +1,40 @@
+[project]
+name = "nnsimplified"
+version = "0.3.2"
+authors = [{ name="Dennis Liang", email="dliang1122@gmail.com" }]
+description = "A package for creating and training neural network with ease"
+readme = "README.md"
+requires-python = ">=3.10"
+classifiers = ["Programming Language :: Python :: 3",
+               "Operating System :: OS Independent"]
+dependencies = ["numpy>=1.25.2",
+                "numba>=0.58.0",
+                "pandas>=2.1.1",
+                "ray[default]>=2.30.0",
+                "pyarrow>=14.0.2",
+                "torch>=2.3.1",
+                "torchaudio>=2.3.1",
+                "torchvision>=0.18.1",
+                "jsons",
+                "matplotlib",
+                "mlflow>=2.9.2",
+                "ipython>=8.16.1",
+                "ipywidgets>=8.1.1",
+                "paramiko>=3.2.0",
+                "torchview>=0.2.6",
+                "graphviz>=0.20.1",
+                "torchmetrics>=1.2.0",
+                "typing_extensions>=4.8.0"
+                ]
+
+[project.urls]
+"Homepage" = "https://github.com/dliang76/nnSimplified"
+
+[build-system]
+requires = ["setuptools>=75",
+            "cppy",
+            "pybind11"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+include = ['nnsimplified*']
