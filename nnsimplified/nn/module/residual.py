@@ -1,24 +1,30 @@
-from typing import Optional
 import torch
 from .base import nnModule
 from .assemble import nnModular, nnParallel
 from .custom import Concat
 
-class skipConnection1D(nnModule):
-    '''module for create skip connection (1D)
-        Authors(s): denns.liang@hilton.com
 
-        init args
-        ----------
-        in_features(int):
-        out_features(int):
-        batchnorm_setting(dict): batch normalization (1d) setting
-    '''
+class skipConnection1D(nnModule):
+    """module for create skip connection (1D)
+    Authors(s): denns.liang@hilton.com
+
+    init args
+    ----------
+    in_features(int):
+    out_features(int):
+    batchnorm_setting(dict): batch normalization (1d) setting
+    """
+
     def __init__(
         self,
         in_features: int,
         out_features: int,
-        batchnorm_setting: dict = {'eps': 1e-05, 'momentum': 0.1, 'affine': True, 'track_running_stats': True}
+        batchnorm_setting: dict = {
+            "eps": 1e-05,
+            "momentum": 0.1,
+            "affine": True,
+            "track_running_stats": True,
+        },
     ):
         super().__init__()
 
@@ -32,15 +38,16 @@ class skipConnection1D(nnModule):
             self.skip_layers.append(torch.nn.Identity())
         else:
             # output size != input size; use a simple linear transformation to change dimension
-            self.skip_layers.append(torch.nn.Linear(in_features = in_features,
-                                                    out_features = out_features,
-                                                    bias = True)
-                                   )
+            self.skip_layers.append(
+                torch.nn.Linear(
+                    in_features=in_features, out_features=out_features, bias=True
+                )
+            )
 
         if batchnorm_setting:
-            self.skip_layers.append(torch.nn.BatchNorm1d(num_features = out_features,
-                                                         **batchnorm_setting)
-                                   )
+            self.skip_layers.append(
+                torch.nn.BatchNorm1d(num_features=out_features, **batchnorm_setting)
+            )
 
     @property
     def in_features(self):
@@ -49,7 +56,7 @@ class skipConnection1D(nnModule):
     @in_features.setter
     def in_features(self, in_features: int):
         if not isinstance(in_features, int):
-            raise ValueError('The <in_features> argument has to be an int.')
+            raise ValueError("The <in_features> argument has to be an int.")
 
         self._in_features = in_features
 
@@ -60,12 +67,11 @@ class skipConnection1D(nnModule):
     @out_features.setter
     def out_features(self, out_features: int):
         if not isinstance(out_features, int):
-            raise ValueError('The <out_features> argument has to be an int.')
+            raise ValueError("The <out_features> argument has to be an int.")
 
         self._out_features = out_features
 
     def forward(self, x):
-
         for l in self.skip_layers:
             x = l(x)
 
@@ -98,15 +104,20 @@ class skipConnection1D(nnModule):
 
 def addResidualConn1D(
     model: nnModule,
-    skip_batchnorm_setting: dict = {'eps': 1e-05, 'momentum': 0.1, 'affine': True, 'track_running_stats': True}
+    skip_batchnorm_setting: dict = {
+        "eps": 1e-05,
+        "momentum": 0.1,
+        "affine": True,
+        "track_running_stats": True,
+    },
 ):
-    '''function for adding residual connection to a model/module
-        Authors(s): denns.liang@hilton.com
+    """function for adding residual connection to a model/module
+    Authors(s): denns.liang@hilton.com
 
-        init args
-        ----------
-        model: neural net model
-    '''
+    init args
+    ----------
+    model: neural net model
+    """
     model_input_shape = model.input_shape
     model_output_shape = model.output_shape
 
@@ -114,22 +125,32 @@ def addResidualConn1D(
         # check model input
         if isinstance(model_input_shape, torch.Size):
             # single tensor input
-            skip_connection = skipConnection1D(in_features = model_input_shape[-1],
-                                            out_features = model_output_shape[-1],
-                                            batchnorm_setting = skip_batchnorm_setting)
+            skip_connection = skipConnection1D(
+                in_features=model_input_shape[-1],
+                out_features=model_output_shape[-1],
+                batchnorm_setting=skip_batchnorm_setting,
+            )
 
         elif isinstance(model_input_shape, (list, tuple)):
-            skip_connection = nnModular([Concat(dim = -1),
-                                        skipConnection1D(in_features = sum([d[-1] for d in model_input_shape]),
-                                                        out_features = model_output_shape[-1],
-                                                        batchnorm_setting = skip_batchnorm_setting)])
+            skip_connection = nnModular(
+                [
+                    Concat(dim=-1),
+                    skipConnection1D(
+                        in_features=sum([d[-1] for d in model_input_shape]),
+                        out_features=model_output_shape[-1],
+                        batchnorm_setting=skip_batchnorm_setting,
+                    ),
+                ]
+            )
 
-        residualBlock = nnParallel({'orig_model':model,
-                                        'skip': skip_connection},
-                                        use_common_input = True,
-                                        output_combine_method = 'sum'
-                                        )
+        residualBlock = nnParallel(
+            {"orig_model": model, "skip": skip_connection},
+            use_common_input=True,
+            output_combine_method="sum",
+        )
     else:
-        raise RuntimeError('Cannot determine the required input data shape. Unable to add a residual connection.')
+        raise RuntimeError(
+            "Cannot determine the required input data shape. Unable to add a residual connection."
+        )
 
     return residualBlock

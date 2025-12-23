@@ -9,6 +9,6 @@ from .custom import (
     TensorSum,
     TensorMean,
     BatchedDot,
-    MatryoshkaLayer
+    MatryoshkaLayer,
 )
 from .residual import skipConnection1D, addResidualConn1D

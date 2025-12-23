@@ -13,5 +13,5 @@ from .module import (
     BatchedDot,
     MatryoshkaLayer,
     skipConnection1D,
-    addResidualConn1D
+    addResidualConn1D,
 )
