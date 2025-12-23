@@ -1,6 +1,6 @@
 import torch
 from abc import ABC, abstractmethod
-from typing import Dict, List, Optional
+from typing import Optional
 import copy
 import torchview
 from ..helper import save_torch_object, load_torch_object, _weight_init
@@ -128,7 +128,7 @@ class nnModule(baseModule, ABC):
         return sum(param.numel() for param in self.parameters())
 
     @weight_init.setter
-    def weight_init(self, weight_init: str | Dict[str, dict]):
+    def weight_init(self, weight_init: str | dict[str, dict]):
         self._weight_init = _weight_init(weight_init = weight_init)
 
     @abstractmethod
@@ -194,7 +194,7 @@ class nnModule(baseModule, ABC):
 
         return parameters[0].device if parameters else 'cpu'
 
-    def _create_dummy_input(self, batch_size = 1):
+    def _create_dummy_input(self, batch_size = 4):
         # method for generate a dummy input tensor from input_shape and input_dtype
 
         input_shape = self.input_shape
@@ -260,7 +260,7 @@ class nnModule(baseModule, ABC):
             # return a tuple if input only contains multiple tensors
             return tuple(dummy_input)
 
-    def _create_dummy_output(self, batch_size = 1):
+    def _create_dummy_output(self, batch_size = 4):
         # method for generate a dummy output tensor； useful for checking the data type and shape of the output tensors
 
         dummy_input = self._create_dummy_input(batch_size = batch_size) # create mock input data
@@ -299,7 +299,7 @@ class nnModule(baseModule, ABC):
 
         if input_data is None:
             # if no input_data provided, genereate a dummy input data.
-            input_data = self._create_dummy_input()
+            input_data = self._create_dummy_input(1)
 
             if input_data is None:
                 raise RuntimeError('Unable to generate mock input data for visualizing the network structure. Please provide <input_data>.')

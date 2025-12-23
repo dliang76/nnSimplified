@@ -1,9 +1,9 @@
-from typing import Dict, List, Optional, Union, Any
+from typing import Optional, Union, Any
 import inspect
 import torch
 from ..helper import _get_call_default_args, _weight_init
 
-def _construct_activation(activation_setting: str | Dict[str, dict]):
+def _construct_activation(activation_setting: str | dict[str, dict]):
     '''function for constructing activation layer from a dict with name = activation type and value = settings'''
 
     # obtain available pytorch activation

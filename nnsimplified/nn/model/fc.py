@@ -1,4 +1,4 @@
-from typing import Dict, List, Optional, Union
+from typing import Optional, Union
 import inspect
 from ..helper import _get_call_default_args
 from ..module.base import nnModule, baseModule
@@ -30,9 +30,9 @@ class mlpBase(nnModule):
         dropout_rate (float): between 0 and 1; 0 for not using dropout
     '''
     def __init__(self,
-                 mlp_layers: List[int] = [],
-                 activation_setting: str | Dict[str, dict] = "ReLU",
-                 weight_init: str | Dict[str, dict] = "kaiming_normal",
+                 mlp_layers: list[int] = [],
+                 activation_setting: str | dict[str, dict] = "ReLU",
+                 weight_init: str | dict[str, dict] = "kaiming_normal",
                  batchnorm_setting: dict = {'eps': 1e-05, 'momentum': 0.1, 'affine': True, 'track_running_stats': True},
                  dropout_rate: float = 0.5):
 
@@ -59,7 +59,7 @@ class mlpBase(nnModule):
         return self._activation_setting
 
     @activation_setting.setter
-    def activation_setting(self, activation_setting: str | Dict[str, dict]):
+    def activation_setting(self, activation_setting: str | dict[str, dict]):
         '''setter for activation'''
 
         if activation_setting is None:
@@ -167,9 +167,9 @@ class mlpBase(nnModule):
 
 class mlp(mlpBase):
     def __init__(self,
-                 nn_structure: List[int] = [],
-                 activation_setting: str | Dict[str, dict] = "ReLU",
-                 weight_init: str | Dict[str, dict] = "kaiming_normal",
+                 nn_structure: list[int] = [],
+                 activation_setting: str | dict[str, dict] = "ReLU",
+                 weight_init: str | dict[str, dict] = "kaiming_normal",
                  batchnorm_setting: dict = {'eps': 1e-05, 'momentum': 0.1, 'affine': True, 'track_running_stats': True},
                  dropout_rate: float = 0.3):
 

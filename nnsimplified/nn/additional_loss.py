@@ -2,7 +2,7 @@ import torch
 from torch.nn import functional as F
 from torchmetrics.functional import mean_absolute_percentage_error
 from abc import ABCMeta, abstractmethod
-from typing import Optional, List
+from typing import Optional
 from copy import copy
 
 '''define custom loss function for pytorch'''
@@ -252,7 +252,7 @@ class MultipleLossSingleTarget(_CustomLossBase):
     '''
     def __init__(self,
                  loss: torch.nn.Module = None,
-                 component_weights: Optional[List[int]] = None,
+                 component_weights: Optional[list[int]] = None,
                  component_aggregation: Optional[str] = None,
                  reduction: str = 'mean'):
         # call super().__init__ to inherit backward() method for enabling gradient calculation
@@ -266,7 +266,7 @@ class MultipleLossSingleTarget(_CustomLossBase):
         self.__dict__['loss'] = self.loss # a workaround to make loss the first level attributes. The class inherits from torch.nn.Module, which overwrites the __setattr__ method and always puts Module input in _module attribute.
         self.loss.reduction = self.reduction # sync the <reduction> attributes in the base loss object
 
-    def calc_loss_tensor(self, inputs: List[torch.Tensor], target:torch.Tensor) -> torch.Tensor:
+    def calc_loss_tensor(self, inputs: list[torch.Tensor], target:torch.Tensor) -> torch.Tensor:
         '''abstract method for calculating loss contribution from each prediction; must be defined'''
 
         if not isinstance(inputs, (list, tuple)):

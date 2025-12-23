@@ -1,4 +1,4 @@
-from typing import Dict, Optional
+from typing import Optional
 from ...module.base import nnModule
 from ...helper import _weight_init, _get_call_args
 from ..utils import _construct_activation, _initialize_linear_layer
@@ -88,13 +88,13 @@ class _TimeMixing(torch.nn.Module):
     '''
     def __init__(self,
                  in_time_steps: int,
-                 activation_setting: str | Dict[str, dict] = "ReLU",
+                 activation_setting: str | dict[str, dict] = "ReLU",
                  batchnorm2d_setting: Optional[dict] = {'eps': 1e-05,
                                                         'momentum': 0.1,
                                                         'affine': True,
                                                         'track_running_stats': True},
                  bn_before_or_after: str = 'before',
-                 weight_init: str | Dict[str, dict] = "kaiming_normal",
+                 weight_init: str | dict[str, dict] = "kaiming_normal",
                  dropout_rate: float = 0.3):
         # store init argument values so we can use them to reset/re-initialize object
         self._init_args = {k:v for k,v in locals().items() if k in _get_call_args(self.__class__)}
@@ -192,13 +192,13 @@ class _FeatureMixing(torch.nn.Module):
                  in_features: int,
                  hidden_layer_size: int = 'default',
                  out_features: int = 'default',
-                 activation_setting: str | Dict[str, dict] = "ReLU",
+                 activation_setting: str | dict[str, dict] = "ReLU",
                  batchnorm2d_setting: Optional[dict] = {'eps': 1e-05,
                                                         'momentum': 0.1,
                                                         'affine': True,
                                                         'track_running_stats': True},
                  bn_before_or_after: str = 'before',
-                 weight_init: str | Dict[str, dict] = "kaiming_normal",
+                 weight_init: str | dict[str, dict] = "kaiming_normal",
                  dropout_rate: float = 0.3):
 
         # store init argument values so we can use them to reset/re-initialize object
@@ -327,13 +327,13 @@ class _FeatMixConditional(torch.nn.Module):
                  static_features: int,
                  hidden_layer_size: int = 'default',
                  out_features: int = 'default',
-                 activation_setting: str | Dict[str, dict] = "ReLU",
+                 activation_setting: str | dict[str, dict] = "ReLU",
                  batchnorm2d_setting: Optional[dict] = {'eps': 1e-05,
                                                         'momentum': 0.1,
                                                         'affine': True,
                                                         'track_running_stats': True},
                  bn_before_or_after: str = 'before',
-                 weight_init: str | Dict[str, dict] = "kaiming_normal",
+                 weight_init: str | dict[str, dict] = "kaiming_normal",
                  dropout_rate: float = 0.3):
         # store init argument values so we can use them to reset/re-initialize object
         self._init_args = {k:v for k,v in locals().items() if k in _get_call_args(self.__class__)}
@@ -418,13 +418,13 @@ class _Mixer(nnModule):
                  in_features: int,
                  fmixer_hidden_size: int = 'default',
                  out_features: int = 'default',
-                 activation_setting: str | Dict[str, dict] = "ReLU",
+                 activation_setting: str | dict[str, dict] = "ReLU",
                  batchnorm2d_setting: Optional[dict] = {'eps': 1e-05,
                                                         'momentum': 0.1,
                                                         'affine': True,
                                                         'track_running_stats': True},
                  bn_before_or_after: str = 'before',
-                 weight_init: str | Dict[str, dict] = "kaiming_normal",
+                 weight_init: str | dict[str, dict] = "kaiming_normal",
                  dropout_rate: float = 0.3):
 
         # store init argument values so we can use them to reset/re-initialize object
@@ -521,13 +521,13 @@ class _MixerConditional(nnModule):
                  fmixer_hidden_size: int = 'default',
                  out_features: int = 'default',
                  static_features: int = 0,
-                 activation_setting: str | Dict[str, dict] = "ReLU",
+                 activation_setting: str | dict[str, dict] = "ReLU",
                  batchnorm2d_setting: Optional[dict] = {'eps': 1e-05,
                                                         'momentum': 0.1,
                                                         'affine': True,
                                                         'track_running_stats': True},
                  bn_before_or_after: str = 'before',
-                 weight_init: str | Dict[str, dict] = "kaiming_normal",
+                 weight_init: str | dict[str, dict] = "kaiming_normal",
                  dropout_rate: float = 0.3):
         # store init argument values so we can use them to reset/re-initialize object
         self._init_args = {k:v for k,v in locals().items() if k in _get_call_args(self.__class__)}
@@ -630,13 +630,13 @@ class TSmixer(nnModule):
                  fmixer_hidden_size: int = 'default',
                  time_mix_only: bool = False,
                  n_mixer: int = 2,
-                 activation_setting: str | Dict[str, dict] = "ReLU",
+                 activation_setting: str | dict[str, dict] = "ReLU",
                  batchnorm2d_setting: Optional[dict] = {'eps': 1e-05,
                                                         'momentum': 0.1,
                                                         'affine': True,
                                                         'track_running_stats': True},
                  bn_before_or_after: str = 'before',
-                 weight_init: str | Dict[str, dict] = "kaiming_normal",
+                 weight_init: str | dict[str, dict] = "kaiming_normal",
                  dropout_rate: float = 0.3):
         # store init argument values so we can use them to reset/re-initialize object
         self._init_args = {k:v for k,v in locals().items() if k in _get_call_args(self.__class__)}
@@ -853,13 +853,13 @@ class TSmixer(nnModule):
 #                  out_features: int = 'default',
 #                  fmixer_hidden_size: int = 'default',
 #                  n_mixer: int = 2,
-#                  activation_setting: str | Dict[str, dict] = "ReLU",
+#                  activation_setting: str | dict[str, dict] = "ReLU",
 #                  batchnorm2d_setting: Optional[dict] = {'eps': 1e-05,
 #                                                         'momentum': 0.1,
 #                                                         'affine': True,
 #                                                         'track_running_stats': True},
 #                  bn_before_or_after: str = 'before',
-#                  weight_init: str | Dict[str, dict] = "kaiming_normal",
+#                  weight_init: str | dict[str, dict] = "kaiming_normal",
 #                  dropout_rate: float = 0.3):
 #         # store init argument values so we can use them to reset/re-initialize object
 #         init_args = {k:v for k,v in locals().items() if k in _get_call_args(self.__class__)}
@@ -999,13 +999,13 @@ class TSmixer_ext(TSmixer):
                  out_features: int = 'default',
                  fmixer_hidden_size: int = 'default',
                  n_mixer: int = 2,
-                 activation_setting: str | Dict[str, dict] = "ReLU",
+                 activation_setting: str | dict[str, dict] = "ReLU",
                  batchnorm2d_setting: Optional[dict] = {'eps': 1e-05,
                                                         'momentum': 0.1,
                                                         'affine': True,
                                                         'track_running_stats': True},
                  bn_before_or_after: str = 'before',
-                 weight_init: str | Dict[str, dict] = "kaiming_normal",
+                 weight_init: str | dict[str, dict] = "kaiming_normal",
                  dropout_rate: float = 0.3):
         # store init argument values so we can use them to reset/re-initialize object
         init_args = {k:v for k,v in locals().items() if k in _get_call_args(self.__class__)}

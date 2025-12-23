@@ -1,5 +1,5 @@
 import numpy as np
-from typing import List, Union
+from typing import Union
 from itertools import compress
 import warnings
 from abc import ABCMeta, abstractmethod
@@ -75,7 +75,7 @@ class labelEncoder(_encoder):
 
     '''
     def __init__(self,
-                 classes: List[Union[str,int]] = None,
+                 classes: list[Union[str,int]] = None,
                  unseen_value_label: Union[str, int] = '__unseen__'):
 
         self.classes = classes
@@ -106,7 +106,7 @@ class labelEncoder(_encoder):
         return self._unseen_value_label
 
     def fit(self,
-            y: List[str] = None,
+            y: list[str] = None,
             verbose: bool = False):
         ''' fit method for mapping values to integer indices
 
@@ -133,7 +133,7 @@ class labelEncoder(_encoder):
         else:
             print("Class values have been pre-specified. No need to run fit() method.")
 
-    def transform(self, y: List[Union[str,int]]) -> List[int]:
+    def transform(self, y: list[Union[str,int]]) -> list[int]:
         '''transform method for encoding values to integer indices (starting at 0)
             args
             ----------
@@ -154,7 +154,7 @@ class labelEncoder(_encoder):
 
         return result[0] if len(result) == 1 else result
 
-    def inverse_transform(self, y: List[Union[str,int]]) -> List[str]:
+    def inverse_transform(self, y: list[Union[str,int]]) -> list[str]:
         ''' method for converting encoded values back to their original values
             args
             ----------
@@ -190,7 +190,7 @@ class binaryEncoder(_encoder):
 
     '''
     def __init__(self,
-                 binary_values: List[int] = [0,1],
+                 binary_values: list[int] = [0,1],
                  pos_label: str | int = None):
 
         self.binary_values = binary_values
@@ -234,7 +234,7 @@ class binaryEncoder(_encoder):
         self._pos_label = pos_label
 
     def fit(self,
-            y: List[str] = None,
+            y: list[str] = None,
             verbose: bool = False):
         ''' fit method for mapping values to integer indices
 
@@ -261,7 +261,7 @@ class binaryEncoder(_encoder):
         else:
             print("pos_label has been pre-specified. No need to run fit() method.")
 
-    def transform(self, y: List[Union[str,int]]) -> List[int]:
+    def transform(self, y: list[Union[str,int]]) -> list[int]:
         '''transform method for encoding values to integer indices (starting at 0)
             args
             ----------
@@ -282,7 +282,7 @@ class binaryEncoder(_encoder):
 
         return result[0] if len(result) == 1 else result
 
-    def inverse_transform(self, y: List[Union[str,int]]) -> List[str]:
+    def inverse_transform(self, y: list[Union[str,int]]) -> list[str]:
         ''' method for converting encoded values back to their original values
             args
             ----------
@@ -321,8 +321,8 @@ class multiLabelEncoder(_encoder):
         self._decoder_dict = None # decoding map
 
     def fit(self,
-            y: List[List[Union[str, int]]],
-            ordered_labels: List[str] = None,
+            y: list[list[Union[str, int]]],
+            ordered_labels: list[str] = None,
             unrecognized_value_mapping: Union[str, int] = None):
         ''' fit method for mapping values to binary value (0, 1)
 
@@ -354,7 +354,7 @@ class multiLabelEncoder(_encoder):
         self._encoder_dict = {k:v for v,k in enumerate(self.classes_)}
         self._decoder_dict = {k:v for k,v in enumerate(self.classes_)}
 
-    def transform(self, y: List[List[Union[str, int]]]) -> List[int]:
+    def transform(self, y: list[list[Union[str, int]]]) -> list[int]:
         '''transform method for encoding values to integer indices (starting at 0)
 
             args
@@ -378,7 +378,7 @@ class multiLabelEncoder(_encoder):
 
         return result[0] if len(result) == 1 else result
 
-    def inverse_transform(self, y: List[int]) -> List[str]:
+    def inverse_transform(self, y: list[int]) -> list[str]:
         ''' method for converting encoded values back to their original values
 
             args
@@ -400,8 +400,8 @@ class multiLabelEncoder(_encoder):
         return result[0] if len(result) == 1 else result
 
     def fit_transform(self,
-                      y: List[str],
-                      ordered_labels: List[str] = None,
+                      y: list[str],
+                      ordered_labels: list[str] = None,
                       unrecognized_value_mapping: Union[str, int] = None):
         ''' fit method for mapping values to integer indices
 
@@ -423,7 +423,7 @@ class multiLabelEncoder(_encoder):
 
         return self.transform(y)
 
-    def transform_binary(self, y: List[List[Union[str, int]]]) -> List[int]:
+    def transform_binary(self, y: list[list[Union[str, int]]]) -> list[int]:
         '''transform method for encoding multi-labels to binary (0, 1 for each label)
 
             args
@@ -453,7 +453,7 @@ class multiLabelEncoder(_encoder):
 
         return result[0] if len(result) == 1 else result
 
-    def inverse_transform_binary(self, y: List[int]) -> List[str]:
+    def inverse_transform_binary(self, y: list[int]) -> list[str]:
         ''' method for converting encoded binary values back to their original labels
 
             args
@@ -475,8 +475,8 @@ class multiLabelEncoder(_encoder):
         return result[0] if len(result) == 1 else result
 
     def fit_transform_binary(self,
-                             y: List[str],
-                             ordered_labels: List[str] = None,
+                             y: list[str],
+                             ordered_labels: list[str] = None,
                              unrecognized_value_mapping: Union[str, int] = None):
         ''' fit method for mapping values to integer indices
 

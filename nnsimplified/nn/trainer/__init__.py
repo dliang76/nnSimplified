@@ -1,1 +1,0 @@
-from .baseTrainer import nnTrainer

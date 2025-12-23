@@ -1,14 +1,25 @@
-from typing import List, Dict, Tuple, Optional
+from typing import Optional
 import torch
 from .base import nnModule
 from .assemble import nnModular, nnParallel
-from .simple import Concat
+from .custom import Concat
 
 class skipConnection1D(nnModule):
-    def __init__(self,
-                 in_features: int,
-                 out_features: int,
-                 batchnorm_setting: dict = {'eps': 1e-05, 'momentum': 0.1, 'affine': True, 'track_running_stats': True}):
+    '''module for create skip connection (1D)
+        Authors(s): denns.liang@hilton.com
+
+        init args
+        ----------
+        in_features(int):
+        out_features(int):
+        batchnorm_setting(dict): batch normalization (1d) setting
+    '''
+    def __init__(
+        self,
+        in_features: int,
+        out_features: int,
+        batchnorm_setting: dict = {'eps': 1e-05, 'momentum': 0.1, 'affine': True, 'track_running_stats': True}
+    ):
         super().__init__()
 
         self.in_features = in_features
@@ -85,9 +96,17 @@ class skipConnection1D(nnModule):
                 m.reset_running_stats()
 
 
-def addResidualConn1D(model: nnModule,
-                      skip_batchnorm_setting: dict = {'eps': 1e-05, 'momentum': 0.1, 'affine': True, 'track_running_stats': True}):
+def addResidualConn1D(
+    model: nnModule,
+    skip_batchnorm_setting: dict = {'eps': 1e-05, 'momentum': 0.1, 'affine': True, 'track_running_stats': True}
+):
+    '''function for adding residual connection to a model/module
+        Authors(s): denns.liang@hilton.com
 
+        init args
+        ----------
+        model: neural net model
+    '''
     model_input_shape = model.input_shape
     model_output_shape = model.output_shape
 

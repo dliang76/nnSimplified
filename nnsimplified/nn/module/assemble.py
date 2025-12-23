@@ -1,4 +1,4 @@
-from typing import List, Dict, Tuple, Optional
+from typing import Optional
 from collections import deque
 import copy
 import torch
@@ -6,7 +6,7 @@ import torch._dynamo
 import warnings
 import inspect
 from .base import nnModule, baseModule
-from .simple import Passthrough
+from .custom import Passthrough
 from ...utils import flatten_list
 
 def _retrieve_module_name(module):
@@ -19,7 +19,7 @@ def _retrieve_module_name(module):
             return names[0]
 
 
-def _rename_duplicates(lst: List[str]):
+def _rename_duplicates(lst: list[str]):
     postfix_dict = dict() # keep track of postfixes
 
     for s in lst:
@@ -76,7 +76,7 @@ class nnParallel(nnModule):
     '''
 
     def __init__(self,
-                 module_list: List[torch.nn.Module | baseModule | int | torch.Size] | Dict[str, torch.nn.Module | baseModule | int | torch.Size] = [],
+                 module_list: list[torch.nn.Module | baseModule | int | torch.Size] | dict[str, torch.nn.Module | baseModule | int | torch.Size] = [],
                  copy_module: bool = False,
                  use_common_input: bool = False,
                  output_combine_method: Optional[str] = None):
@@ -95,7 +95,7 @@ class nnParallel(nnModule):
         return self._module_list
 
     def register_modules(self,
-                         module_list: List[nnModule | baseModule | int] | Dict[str, nnModule | baseModule | int],
+                         module_list: list[nnModule | baseModule | int] | dict[str, nnModule | baseModule | int],
                          copy_module: bool):
         '''Method for registering modules in the module list'''
 
@@ -174,7 +174,7 @@ class nnParallel(nnModule):
                 warnings.warn(warning_text, RuntimeWarning)
 
     @property
-    def structure_input_shape(self) -> Tuple[torch.Size]:
+    def structure_input_shape(self) -> tuple[torch.Size]:
         '''network structure input shape. Could be different from user input shape due to the flag use_common_input'''
 
         if not hasattr(self, '_structure_input_shape'):
@@ -192,7 +192,7 @@ class nnParallel(nnModule):
         return self._structure_input_shape
 
     @property
-    def input_shape(self) -> Tuple[torch.Size]:
+    def input_shape(self) -> tuple[torch.Size]:
         '''required input shape. Might be different from network input shape due to the flag use_common_input'''
         shape = self.structure_input_shape # get structure input shape
 
@@ -207,7 +207,7 @@ class nnParallel(nnModule):
         return shape
 
     @property
-    def structure_input_dtype(self) -> Tuple[torch.dtype]:
+    def structure_input_dtype(self) -> tuple[torch.dtype]:
         '''network structure input dtype. Could be different from user input dtype due to the flag use_common_input'''
 
         if not hasattr(self, '_structure_input_dtype'):
@@ -243,7 +243,7 @@ class nnParallel(nnModule):
         return self._structure_input_dtype
 
     @property
-    def input_dtype(self) -> Tuple[torch.dtype]:
+    def input_dtype(self) -> tuple[torch.dtype]:
         '''required input dtype. Might be different from structure input dtype due to the flag use_common_input'''
         dtype = self.structure_input_dtype # get structure input dtype
 
@@ -446,7 +446,7 @@ class nnModular(nnModule):
         copy_module (bool): whether to make a copy or to reference the modules
     '''
     def __init__(self,
-                 network_structure: List[List[baseModule | torch.nn.Module] | baseModule | torch.nn.Module],
+                 network_structure: list[list[baseModule | torch.nn.Module] | baseModule | torch.nn.Module],
                  copy_module: bool = False,
                  **kwargs):
 
@@ -461,7 +461,7 @@ class nnModular(nnModule):
         self.additional_args = kwargs
 
     def register_modules(self,
-                         network_structure: List[List[baseModule | torch.nn.Module] | baseModule | torch.nn.Module] | Dict[str, List[baseModule | torch.nn.Module] | baseModule | torch.nn.Module],
+                         network_structure: list[list[baseModule | torch.nn.Module] | baseModule | torch.nn.Module] | dict[str, list[baseModule | torch.nn.Module] | baseModule | torch.nn.Module],
                          copy_module: bool):
         '''method for register network components'''
 

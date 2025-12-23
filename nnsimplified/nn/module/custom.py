@@ -1,13 +1,23 @@
 import torch
-from typing import Dict, List, Optional
+from typing import Optional
 from .base import baseModule
 
 class embeddingModule(torch.nn.Embedding, baseModule):
-    '''Simple module for generating embedding layer'''
+    '''Simple module for generating embedding layer
+        Authors(s): denns.liang@hilton.com
+
+        init args
+        ----------
+        n_categories (int): number of categories
+        embedding_dim (int): the size of each embedding vector
+        input_data_shape (torch.Size): shape of input data
+        padding_idx (int): If specified, the entries at padding_idx do not contribute to the gradient; therefore, the embedding vector at padding_idx is not updated during training. Default to all zero. Commonly used for missing categories.
+        kwargs: additional keyword arguments that can be passed to torch.nn.Embedding
+    '''
     def __init__(self,
                  n_categories: int,
                  embedding_dim: int,
-                 input_data_shape: int = torch.Size([-1]),
+                 input_data_shape: torch.Size = torch.Size([-1]),
                  padding_idx: int | None = None,
                  **kwargs):
 
@@ -51,8 +61,8 @@ class Passthrough(baseModule):
     '''Simple module for allowing a tensor of specified shape and dtype to passthrough; similar to torch.nn.Identity() but with
        specified shape and dtype attributes useful for figuring out input and ouput of more advanced network structures'''
     def __init__(self,
-                 shape: torch.Size | List[torch.Size],
-                 dtype: torch.dtype | List[torch.dtype] = torch.float32):
+                 shape: torch.Size | list[torch.Size],
+                 dtype: torch.dtype | list[torch.dtype] = torch.float32):
 
         super().__init__()
 
@@ -64,7 +74,7 @@ class Passthrough(baseModule):
         return self._shape
 
     @shape.setter
-    def shape(self, shape: torch.Size | List[torch.Size]):
+    def shape(self, shape: torch.Size | list[torch.Size]):
         # assignment with data check
         if isinstance(shape, torch.Size):
             self._shape = torch.Size([-1]) + shape[1:] # replace the first dim with -1 to indicate arbitrary batch size
@@ -83,7 +93,7 @@ class Passthrough(baseModule):
         return self._dtype
 
     @dtype.setter
-    def dtype(self, dtype: torch.dtype | List[torch.dtype]):
+    def dtype(self, dtype: torch.dtype | list[torch.dtype]):
         # assignment with data check
         if isinstance(self.shape, torch.Size):
             if isinstance(dtype, torch.dtype):
@@ -144,6 +154,13 @@ class Passthrough(baseModule):
 
 
 class Concat(torch.nn.Module):
+    '''Simple module for concatenating outputs from previous modules
+        Authors(s): denns.liang@hilton.com
+
+        init args
+        ----------
+        dim(int): dimension to concat
+    '''
     def __init__(self,
                  dim: int):
         super().__init__()
@@ -170,8 +187,15 @@ class Concat(torch.nn.Module):
 
 
 class TensorSum(torch.nn.Module):
+    '''Simple module for summing the outputs of previous modules
+        Authors(s): denns.liang@hilton.com
+
+        init args
+        ----------
+        weights(float): weights added to the outputs of the previous module(s)
+    '''
     def __init__(self,
-                 weights: List[int] = None):
+                 weights: list[float] = None):
         super().__init__()
         self.weights = weights
 
@@ -180,7 +204,7 @@ class TensorSum(torch.nn.Module):
         return self._weights
 
     @weights.setter
-    def weights(self, weights: int):
+    def weights(self, weights: float):
         if not weights:
             self._weights = None
         else:
@@ -203,8 +227,15 @@ class TensorSum(torch.nn.Module):
 
 
 class TensorMean(TensorSum):
+    '''Simple module for averagikng the outputs of the previous modules
+        Authors(s): denns.liang@hilton.com
+
+        init args
+        ----------
+        weights(float): weights added to the outputs of the previous module(s)
+    '''
     def __init__(self,
-                 weights: List[int] = None):
+                 weights: list[float] = None):
         super().__init__(weights = weights)
         if self.weights is not None:
             self._normalized_weights = self.weights/self.weights.sum()
@@ -218,8 +249,19 @@ class TensorMean(TensorSum):
 
 
 class Split(torch.nn.Module):
+    '''Simple module for splitting the tensors
+        Authors(s): denns.liang@hilton.com
+
+        init args
+        ----------
+        split_size_or_sections (int, list[int]): integer value = size of all resulting tensor; list or integers - specify size of each resulting tensor
+            e.g. input tensor = [2,3,1,4]
+                    -  split_size_or_sections = 2 -> two resulting tensors [2,3], [1,4]
+                    -  split_size_or_sections = [2,1,1] -> 3 resulting tensors [2,3], [1], [4]
+       dim(int): along which dimension to split
+    '''
     def __init__(self,
-                 split_size_or_sections: int | List[int],
+                 split_size_or_sections: int | list[int],
                  dim: int):
         super().__init__()
         self.split_size_or_sections = split_size_or_sections
@@ -230,7 +272,7 @@ class Split(torch.nn.Module):
         return self._split_size_or_sections
 
     @split_size_or_sections.setter
-    def split_size_or_sections(self, split_size_or_sections: int | List[int]):
+    def split_size_or_sections(self, split_size_or_sections: int | list[int]):
         if isinstance(split_size_or_sections, int):
             self._split_size_or_sections = split_size_or_sections
         elif isinstance(split_size_or_sections, (list, tuple)):
@@ -263,8 +305,20 @@ class Split(torch.nn.Module):
 
 
 class ConcatNSplit(torch.nn.Module):
+    '''Simple module for concating and re-splitting the tensors
+        Authors(s): denns.liang@hilton.com
+
+        init args
+        ----------
+        split_size_or_sections (int, list[int]): integer value = size of all resulting tensor; list or integers - specify size of each resulting tensor
+            e.g. input tensor = [2,3,1,4]
+                    -  split_size_or_sections = 2 -> two resulting tensors [2,3], [1,4]
+                    -  split_size_or_sections = [2,1,1] -> 3 resulting tensors [2,3], [1], [4]
+        concat_dim (int): dimension to concat
+        dim(int): dimension to split after concatenation
+    '''
     def __init__(self,
-                 split_size_or_sections: int | List[int],
+                 split_size_or_sections: int | list[int],
                  concat_dim: int = -1,
                  split_dim: int = -1):
         super().__init__()
@@ -287,7 +341,7 @@ class ConcatNSplit(torch.nn.Module):
         return self._split_size_or_sections
 
     @split_size_or_sections.setter
-    def split_size_or_sections(self, split_size_or_sections: int | List[int]):
+    def split_size_or_sections(self, split_size_or_sections: int | list[int]):
         if isinstance(split_size_or_sections, int):
             self._split_size_or_sections = split_size_or_sections
         elif isinstance(split_size_or_sections, (list, tuple)):
@@ -322,6 +376,14 @@ class ConcatNSplit(torch.nn.Module):
 
 
 class Transpose(torch.nn.Module):
+    '''Simple module for transposing tensors
+        Authors(s): denns.liang@hilton.com
+
+        init args
+        ----------
+        dim0(int): the first dimension to be transposed
+        dim1(int): the second dimension to be transposed
+    '''
     def __init__(self,
                  dim0,
                  dim1):
@@ -375,7 +437,15 @@ class BatchedDot(torch.nn.Module):
 
 
 class MatryoshkaLayer(torch.nn.Module):
-    def __init__(self, rep_sizes: List[int] = None, min_size = 4):
+    '''module for generating matryoshka output (nested)
+        Authors(s): denns.liang@hilton.com
+
+        init args
+        ----------
+        rep_sizes(list[int]): represenation sizes. E.g. for a 128-dim vector, [4, 16, 128] means using first 4, first 16, and the whole 128
+        min_size(int): minimum size for auto splitting
+    '''
+    def __init__(self, rep_sizes: list[int] = None, min_size = 4):
         super().__init__()
 
         self.rep_sizes = rep_sizes
@@ -386,7 +456,7 @@ class MatryoshkaLayer(torch.nn.Module):
         return self._rep_sizes
 
     @rep_sizes.setter
-    def rep_sizes(self, rep_sizes: Optional[List]):
+    def rep_sizes(self, rep_sizes: Optional[list]):
 
         if rep_sizes:
             if isinstance(rep_sizes, (list, tuple)):
@@ -424,7 +494,7 @@ class MatryoshkaLayer(torch.nn.Module):
 
         return sorted(rep_sizes)
 
-    def _nested_rep(self, input: torch.Tensor, rep_sizes: List[int]):
+    def _nested_rep(self, input: torch.Tensor, rep_sizes: list[int]):
         return tuple([input.narrow(dim = -1, start = 0, length = s) for s in rep_sizes])
 
     def forward(self, input):
