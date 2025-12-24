@@ -16,14 +16,10 @@ sudo port install graphviz
 ```
 
 # Installation
-1. Clone package
 ```
-git clone https://github.com/dliang76/nnSimplified.git
+pip install git+https://github.com/dliang76/nnSimplified.git
 ```
-1. Install
-```
-pip install .
-```
+
 
 
 
