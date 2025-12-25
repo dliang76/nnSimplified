@@ -16,9 +16,18 @@ sudo port install graphviz
 ```
 
 # Installation
+1. Clone the repo
 ```
-pip install git+https://github.com/dliang76/nnSimplified.git
+git clone https://github.com/dliang76/nnSimplified.git
 ```
+
+2. Install the package
+```
+pip install nnSimplified/.
+```
+
+# Examples
+There are some simple examples on how to construct certain neural net structures in nnSimplified/notebooks/some_examples.ipynb
 
 
 
